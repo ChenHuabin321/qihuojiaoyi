@@ -51,13 +51,13 @@ ROBOTSTXT_OBEY = False
 
 # Enable or disable downloader middlewares
 # See https://doc.scrapy.org/en/latest/topics/downloader-middleware.html
-DOWNLOADER_MIDDLEWARES = {
+DOWNLOADER_MIDDLEWARES = {#启用爬虫中间件
     "qihuojiaoyi.middlewares.QihuojiaoyiRetryMiddleware": 554,
 }
-RETRY_ENABLED = True
-RETRY_TIMES = 3
+RETRY_ENABLED = True#是否进行失败重试
+RETRY_TIMES = 3#失败重试次数
 # HTTPERROR_ALLOWED_CODES = [404]#下载网页时，发生的404错误，返回的response,
-HTTPERROR_ALLOW_ALL = True#下载网页时，发生所有错误返回的response都要处理
+HTTPERROR_ALLOW_ALL = True#下载网页时，发生所有错误返回的response都要处理，网上资料说最好不要这么设置，但是现在技术太菜，没想到其他办法
 # Enable or disable extensions
 # See https://doc.scrapy.org/en/latest/topics/extensions.html
 # EXTENSIONS = {

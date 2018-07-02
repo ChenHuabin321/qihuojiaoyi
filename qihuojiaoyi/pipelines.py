@@ -11,10 +11,10 @@ class QihuojiaoyiPipeline(object):
     def __init__(self):
         self.file_path = 'date.csv'
         self.dict_key = ['类别','日期','前结算','今开盘','最高价','最低价', '收盘价','结算参考价','涨跌1','涨跌2','成交手','持仓手','变化']
-        if not os.path.exists(self.file_path):
+        if not os.path.exists(self.file_path):#若是存放数据的文件不存在，那么就要写入第一行的表头
             self.file = open(self.file_path,'a',encoding='utf-8' , newline='')
             self.w=csv.writer(self.file)
-            self.w.writerow(self.dict_key)
+            self.w.writerow(self.dict_key)#写入表头
         else:
             self.file = open(self.file_path,'a',encoding='utf-8' , newline='')
             self.w=csv.writer(self.file)
@@ -35,7 +35,7 @@ class QihuojiaoyiPipeline(object):
             item['holding_hands'][0],
             item['transformation']]
         print(dict_values)
-        self.w.writerow(dict_values)
+        self.w.writerow(dict_values)#写入数据
         return item
 
     def close_spider(self , spider):

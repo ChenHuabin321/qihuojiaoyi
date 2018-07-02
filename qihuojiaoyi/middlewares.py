@@ -107,18 +107,18 @@ class QihuojiaoyiDownloaderMiddleware(object):
     def spider_opened(self, spider):
         spider.logger.info('Spider opened: %s' % spider.name)
 
-
+#自定义的爬虫下载中间件，作用是当爬虫遇到异常时，多次（3次）尝试重新爬取
 class QihuojiaoyiRetryMiddleware(RetryMiddleware):
-    logger = logging.getLogger(__name__)
-    settings = get_project_settings()
-    max_retry_times =settings['RETRY_TIMES']
+    logger = logging.getLogger(__name__)#获取日子对象
+    settings = get_project_settings()#获取当前爬虫项目设置对象
+    max_retry_times =settings['RETRY_TIMES']#获取爬虫设置参数的方法
     def process_response(self, request, response, spider):
         if request.meta.get('dont_retry', False):
             return response
-        if response.status >200 :
+        if response.status >200 :#若是状态码大于200，也可设置为大于300
             reason = response_status_message(response.status)
-            time.sleep(random.randint(3, 5))
-            self.logger.warning('response状态码异常：{}'.format(response.status))
+            time.sleep(random.randint(3, 5))#延迟3-5秒
+            self.logger.warning('response状态码异常：{}'.format(response.status))#添加日志信息
             return self._retry(request, reason, spider) or response
         return response
 

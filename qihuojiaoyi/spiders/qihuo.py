@@ -5,9 +5,9 @@ import datetime
 
 
 class QihuoSpider(scrapy.Spider):
-    # handle_httpstatus_list = [403]
     name = 'qihuo'
-    def __init__(self , date=None , *args , **kwargs):
+    #重构构造方法，用于命令行输入开始日期参数，方便爬取
+    def __init__(self , date=None , *args , **kwargs):#date为用户设置的开始爬取的日期格式为yyyymmdd
         super(QihuoSpider , self).__init__(*args , **kwargs)
         print('*********************启动爬虫**************************')
         self.start_date = date
@@ -64,7 +64,7 @@ class QihuoSpider(scrapy.Spider):
             return False
 
     def parse(self, response):
-        try:
+        try:#使用异常处理，若是发生403.404等一些列异常，跳过继续下一页爬取，可防止爬虫因意外退出
             item = QihuojiaoyiItem()
             html_dict = eval(response.body)#将字符串类型网页转换为字典，方便提取数据
             initial_data_list = html_dict.get("o_curinstrument")#包含每一条数据（包括非铜材料的数据）的一个list,每一个元素都是字典
@@ -84,12 +84,11 @@ class QihuoSpider(scrapy.Spider):
                     item['holding_hands'] = each.get("OPENINTEREST"),
                     item['transformation'] = each.get("OPENINTERESTCHG")
                     print('*************************{}***********************'.format(item['stock_date']))
-                    # print(item)
                     yield item
         except Exception as e:
             print('发生异常，{}信息爬取失败：{}'.format(self.start_date , e))
         finally:
-            self.start_date = self.get_next_day(self.start_date)
+            self.start_date = self.get_next_day(self.start_date)#获取下一工作日
             if self.start_date:
-                next_url = 'http://www.shfe.com.cn/data/dailydata/kx/kx' + self.start_date + '.dat'
+                next_url = 'http://www.shfe.com.cn/data/dailydata/kx/kx' + self.start_date + '.dat'#构造下一页地址
                 yield scrapy.Request(url = next_url , callback = self.parse, dont_filter=True)#这里的,dont_filter=True)参数一定不能丢，否则只能回调一次
